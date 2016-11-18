@@ -1,0 +1,10 @@
+{
+    "pros": {
+        "roleDate": "2015-10-10 10:10:10",
+        "roleSay": "I am administrator !",
+        "roleAge": 22,
+        "isAdmin": true
+    },
+    "roleId": 1,
+    "name": "超管"
+}

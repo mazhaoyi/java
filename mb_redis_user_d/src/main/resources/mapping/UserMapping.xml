@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="mb_redis_user_d.com.doordu.dao.UserDao">
+	<resultMap type="mb_redis_user_d.com.doordu.entity.UserEntity" id="userResultMap">
+		<id column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="age" property="age" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		<result column="birthday" property="birthday" jdbcType="DATE"/>
+		<result column="is_valid" property="isValid" jdbcType="BOOLEAN"/>
+		<result column="properties" property="properties" javaType="mb_redis_user_d.com.doordu.entity.ext.UserProperties" typeHandler="mb_redis_core.com.doordu.typehandler.JsonTypeHandler"/>
+	</resultMap>
+	<sql id="column">
+		name,
+		age,
+		create_time,
+		birthday,
+		is_valid,
+		properties
+	</sql>
+	<select id="list" resultMap="userResultMap">
+		select
+			user_id,
+			<include refid="column"/>
+		from
+			user
+	</select>
+	<select id="getById" resultMap="userResultMap">
+		select
+			user_id,
+			<include refid="column"/>
+		from
+			user
+		<where>
+			user_id = #{userId}
+		</where>
+	</select>
+	<insert id="save" parameterType="mb_redis_user_d.com.doordu.entity.UserEntity">
+		insert into user
+		(<include refid="column"/>)
+		values(
+			#{name},
+			#{age},
+			#{createTime},
+			#{birthday},
+			#{isValid},
+			#{properties, typeHandler=mb_redis_core.com.doordu.typehandler.JsonTypeHandler}
+		)
+		<selectKey order="AFTER" keyProperty="userId" resultType="java.lang.Integer">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+	<update id="update" parameterType="mb_redis_user_d.com.doordu.entity.UserEntity">
+		update
+			user
+		set
+			name = #{name},
+			age = #{age},
+			create_time = #{createTime},
+			birthday = #{birthday},
+			is_valid = #{isValid},
+			properties = #{properties, typeHandler=mb_redis_core.com.doordu.typehandler.JsonTypeHandler}
+	</update>
+</mapper>

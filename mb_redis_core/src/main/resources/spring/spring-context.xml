@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+						">
+
+	<!-- spring只允许有一个property-placeholder之类的文件，如果有多个 start -->
+	<bean id="jdbcResources" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<value>classpath:properties/jdbc.properties</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="jdbcConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations" ref="jdbcResources" />
+	</bean>
+	<!-- spring只允许有一个property-placeholder之类的文件，如果有多个 end -->
+
+	<!-- dataSource 阿里巴巴druid -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		destroy-method="close" init-method="init">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="${jdbc.sql.initialSize}" />
+		<!-- 连接池最大数量 -->
+		<property name="maxActive" value="${jdbc.sql.maxActive}" />
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="${jdbc.sql.minIdle}" />
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="${jdbc.sql.maxWait}" />
+
+		<!-- 配置监控统计拦截的filters,stat监控，wall数据库SQL注入防火墙 -->
+<!-- 		<property name="filters" value="stat,wall" /> -->
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="validationQuery">
+			<value>SELECT 2</value>
+		</property>
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxOpenPreparedStatements" value="20" />
+		<property name="proxyFilters">
+			<list>
+				<ref bean="log-filter"/>
+				<ref bean="stat-filter"/>
+				<ref bean="wall-filter"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="log-filter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
+		<property name="statementExecutableSqlLogEnable" value="false" />
+	</bean>
+	<bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter">
+        <property name="slowSqlMillis" value="3000" />
+        <property name="logSlowSql" value="true" />
+        <property name="mergeSql" value="true" />
+    </bean>
+    <bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter">
+    </bean>
+
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath*:mapping/**Mapping.xml" />
+		<!-- mybatis.xml -->
+		<property name="configLocation" value="classpath:mybatis/mybatis.xml" />
+		<!-- 分页插件 -->
+		<property name="plugins">
+			<list>
+				<bean
+					class="com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor">
+					<property name="dialectClass"
+						value="com.github.miemiedev.mybatis.paginator.dialect.PostgreSQLDialect" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

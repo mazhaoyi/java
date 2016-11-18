@@ -1,0 +1,52 @@
+package mb_redis_core.com.doordu.typehandler;
+
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+
+import com.alibaba.fastjson.JSON;
+/**
+ * mybatis 自定义JSON类型，对应数据库的json字段
+ * @author admin
+ *
+ * @param <T>
+ */
+public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
+	private Class<T> clazz;
+	
+	public JsonTypeHandler(Class<T> clazz) {
+		if (clazz == null) {
+			throw new IllegalArgumentException("Type argument cannot be null !");
+		}
+		this.clazz = clazz;
+	}
+	
+	@Override
+	public void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
+		// TODO Auto-generated method stub
+		ps.setString(i, JSON.toJSONString(parameter));
+	}
+
+	@Override
+	public T getNullableResult(ResultSet rs, String columnName) throws SQLException {
+		// TODO Auto-generated method stub
+		return JSON.parseObject(rs.getString(columnName), clazz);
+	}
+
+	@Override
+	public T getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+		// TODO Auto-generated method stub
+		return JSON.parseObject(rs.getString(columnIndex), clazz);
+	}
+
+	@Override
+	public T getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+		// TODO Auto-generated method stub
+		return JSON.parseObject(cs.getString(columnIndex), clazz);
+	}
+	
+}

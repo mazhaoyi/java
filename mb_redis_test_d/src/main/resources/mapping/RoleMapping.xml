@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="mb_redis_test_d.com.doordu.dao.RoleDao">
+	<resultMap type="mb_redis_test_d.com.doordu.entity.RoleEntity" id="roleResultMap">
+		<id column="role_id" property="roleId" jdbcType="INTEGER"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="pros" property="pros" javaType="mb_redis_test_d.com.doordu.entity.ext.RolePros" typeHandler="mb_redis_core.com.doordu.typehandler.JsonTypeHandler"/>
+	</resultMap>
+	<insert id="save" parameterType="mb_redis_test_d.com.doordu.entity.RoleEntity">
+		insert into
+			role (name, pros)
+		values(
+			#{name},
+			#{pros, typeHandler=mb_redis_core.com.doordu.typehandler.JsonTypeHandler}
+		)
+		<selectKey order="AFTER" keyProperty="roleId" resultType="java.lang.Integer">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+	<select id="list" resultMap="roleResultMap">
+		select role_id, name, pros
+			from
+		role
+	</select>
+	<update id="update" parameterType="mb_redis_test_d.com.doordu.entity.RoleEntity">
+		update
+			role
+		set
+			name = #{name},
+			pros = #{pros, typeHandler=mb_redis_core.com.doordu.typehandler.JsonTypeHandler}
+		<where>
+			role_id = #{roleId}
+		</where>
+	</update>
+</mapper>

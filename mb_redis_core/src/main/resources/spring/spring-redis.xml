@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context    
+                        http://www.springframework.org/schema/context/spring-context.xsd
+						">
+	
+	<!-- spring只允许有一个property-placeholder之类的文件，如果有多个 start  -->
+	<bean id="redisResources" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<value>classpath:properties/redis.properties</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="redisConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="locations" ref="redisResources"/>
+	</bean>
+	<!-- spring只允许有一个property-placeholder之类的文件，如果有多个 end  -->
+	
+	<context:component-scan base-package="mb_redis_core.com.doordu.redis"/>
+	
+	<!-- redis连接池配置 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="minIdle" value="${redis.minIdle}"/>
+		<property name="maxIdle" value="${redis.maxIdle}"/>
+		<property name="maxTotal" value="${redis.maxTotal}"/>
+		<property name="maxWaitMillis" value="${redis.maxWaitMillis}"/>
+		<!-- 向调用者输出“链接”资源时，是否检测是有有效，如果无效则从连接池中移除，并尝试获取继续获取。设为true，一个挂都不能用 -->
+		<property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+		<!-- 向连接池“归还”链接时，是否检测“链接”对象的有效性。 -->
+		<property name="testOnReturn" value="${redis.testOnReturn}"/>
+	</bean>
+	<!-- redis连接池 -->
+	<bean id="sharedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig"/>
+		<constructor-arg index="1">
+			<list>
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg name="host" value="${redis6379.host}"/>
+					<constructor-arg name="name" value="${redis6379.name}"/>
+					<constructor-arg name="port" value="${redis6379.port}"/>
+					<constructor-arg name="timeout" value="${redis.timeout}"/>
+					<constructor-arg name="weight" value="${redis.weight}"/>
+				</bean>
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg name="host" value="${redis6380.host}"/>
+					<constructor-arg name="name" value="${redis6380.name}"/>
+					<constructor-arg name="port" value="${redis6380.port}"/>
+					<constructor-arg name="timeout" value="${redis.timeout}"/>
+					<constructor-arg name="weight" value="${redis.weight}"/>
+				</bean>
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg name="host" value="${redis6381.host}"/>
+					<constructor-arg name="name" value="${redis6381.name}"/>
+					<constructor-arg name="port" value="${redis6381.port}"/>
+					<constructor-arg name="timeout" value="${redis.timeout}"/>
+					<constructor-arg name="weight" value="${redis.weight}"/>
+				</bean>
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg name="host" value="${redis6382.host}"/>
+					<constructor-arg name="name" value="${redis6382.name}"/>
+					<constructor-arg name="port" value="${redis6382.port}"/>
+					<constructor-arg name="timeout" value="${redis.timeout}"/>
+					<constructor-arg name="weight" value="${redis.weight}"/>
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+	<!-- java帮我们同步sentinel的信息，将主从信息同步到客户端来 -->
+	<bean id="jedisSentinelPool" class="redis.clients.jedis.JedisSentinelPool">
+		<constructor-arg index="0" value="mymaster"/>
+		<constructor-arg index="1">
+			<set>
+				<value>${redis.master}</value>
+			</set>
+		</constructor-arg>
+		<constructor-arg index="2" ref="jedisPoolConfig"/>
+	</bean>
+</beans>
