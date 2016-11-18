@@ -15,10 +15,10 @@
 		<module>mb_redis_core</module>
 		<module>mb_redis_user_d</module>
 		<module>mb_redis_user_s</module>
-		<module>mb_redis_test_d</module>
-		<module>mb_redis_test_s</module>
+		<module>mb_redis_role_d</module>
+		<module>mb_redis_role_s</module>
 	    <module>mb_user_c</module>
-	    <module>mb_test_c</module>
+	    <module>mb_role_c</module>
   </modules>
 
 	<build>
