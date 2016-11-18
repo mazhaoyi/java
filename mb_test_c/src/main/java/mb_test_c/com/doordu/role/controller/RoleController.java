@@ -1,4 +1,4 @@
-package mb_redis_c.com.doordu.role.controller;
+package mb_test_c.com.doordu.role.controller;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
-import mb_redis_c.com.doordu.role.vo.RoleVo;
 import mb_redis_test_d.com.doordu.entity.RoleEntity;
 import mb_redis_test_s.com.doordu.service.RoleService;
+import mb_test_c.com.doordu.role.vo.RoleVo;
 
 @Controller
 @RequestMapping("/role")

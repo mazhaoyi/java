@@ -1,4 +1,4 @@
-package mb_redis_c.com.doordu.user.controller;
+package mb_user_c.com.doordu.user.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 
-import mb_redis_c.com.doordu.user.vo.UserVo;
 import mb_redis_user_d.com.doordu.entity.UserEntity;
 import mb_redis_user_s.com.doordu.service.UserService;
+import mb_user_c.com.doordu.user.vo.UserVo;
 
 @Controller
 @RequestMapping("/user")

@@ -1,26 +1,18 @@
 <?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>doordu.com</groupId>
-		<artifactId>mb</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
-
-	<artifactId>mb_redis_c</artifactId>
-	<packaging>war</packaging>
-	<name>mb_redis_c Maven Webapp</name>
-	<url>http://maven.apache.org</url>
-
-	<dependencies>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>doordu.com</groupId>
+    <artifactId>mb</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>mb_test_c</artifactId>
+  <packaging>war</packaging>
+  <name>mb_test_c Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
 		<!-- service start -->
-		<dependency>
-			<groupId>doordu.com</groupId>
-			<artifactId>mb_redis_user_s</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>doordu.com</groupId>
 			<artifactId>mb_redis_test_s</artifactId>
@@ -44,7 +36,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>mb_redis_user_c</finalName>
+		<finalName>mb_test_c</finalName>
 		<plugins>
 			<!-- jetty插件 -->
 			<plugin>
@@ -53,7 +45,7 @@
 				<version>9.3.9.v20160517</version>
 				<configuration>
 					<webApp>
-						<contextPath>/admin</contextPath>
+						<contextPath>/mb/role</contextPath>
 						<descriptor>${basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>
 						<defaultsDescriptor>${basedir}/src/main/resources/jetty/webdefault.xml</defaultsDescriptor>
 					</webApp>

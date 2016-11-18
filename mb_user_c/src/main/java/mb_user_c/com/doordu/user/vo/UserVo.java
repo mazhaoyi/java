@@ -1,4 +1,4 @@
-package mb_redis_c.com.doordu.user.vo;
+package mb_user_c.com.doordu.user.vo;
 
 import java.util.Date;
 

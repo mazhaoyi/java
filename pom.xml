@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>doordu.com</groupId>
 	<artifactId>mb</artifactId>
@@ -17,8 +17,9 @@
 		<module>mb_redis_user_s</module>
 		<module>mb_redis_test_d</module>
 		<module>mb_redis_test_s</module>
-		<module>mb_redis_c</module>
-	</modules>
+	    <module>mb_user_c</module>
+	    <module>mb_test_c</module>
+  </modules>
 
 	<build>
 		<plugins>

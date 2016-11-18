@@ -1,4 +1,4 @@
-package mb_redis_c.com.doordu.role.vo;
+package mb_test_c.com.doordu.role.vo;
 
 import mb_redis_test_d.com.doordu.entity.ext.RolePros;
 
