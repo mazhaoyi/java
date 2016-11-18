@@ -17,7 +17,7 @@
 		<module>mb_redis_user_s</module>
 		<module>mb_redis_test_d</module>
 		<module>mb_redis_test_s</module>
-		<module>mb_redis_user_c</module>
+		<module>mb_redis_c</module>
 	</modules>
 
 	<build>

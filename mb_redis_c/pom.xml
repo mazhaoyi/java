@@ -11,7 +11,7 @@
 
 	<artifactId>mb_redis_c</artifactId>
 	<packaging>war</packaging>
-	<name>mb_redis_user_c Maven Webapp</name>
+	<name>mb_redis_c Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
