@@ -37,4 +37,26 @@
     		</list>
     	</property>
     </bean>
+    
+    <!-- swagger -->
+    <bean class="mb_redis_core.com.doordu.swagger.SwaggerConfig">
+    	<property name="apiInfo" ref="apiInfo"/>
+    </bean>
+    <bean id="apiInfo" class="springfox.documentation.service.ApiInfo">
+    	<constructor-arg name="title" value="角色管理API"/>
+    	<constructor-arg name="description" value="管理人物角色的API"/>
+    	<constructor-arg name="version" value="v2"/>
+    	<constructor-arg name="termsOfServiceUrl" value="/mb/role"/>
+    	<constructor-arg name="license" value="国际公认"/>
+    	<constructor-arg name="licenseUrl" value=""/>
+    	<constructor-arg name="contact">
+    		<bean class="springfox.documentation.service.Contact">
+    			<constructor-arg name="name" value="mzy"/>
+    			<constructor-arg name="url" value=""/>
+    			<constructor-arg name="email" value="690196003@qq.com"/>
+    		</bean>
+    	</constructor-arg>
+    </bean>
+    <!-- enable swagger ui -->
+    <mvc:resources location="/swagger/" mapping="/sw/**"/>
 </beans>

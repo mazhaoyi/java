@@ -19,7 +19,7 @@
 		<module>mb_redis_role_s</module>
 	    <module>mb_user_c</module>
 	    <module>mb_role_c</module>
-  </modules>
+	</modules>
 
 	<build>
 		<plugins>

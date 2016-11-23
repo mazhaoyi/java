@@ -1,0 +1,33 @@
+package mb_redis_core.com.doordu.swagger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+/**
+ * swagger和springmvc整合配置类
+ * @author admin
+ *
+ */
+@EnableSwagger2
+public class SwaggerConfig {
+	@Autowired
+	private ApiInfo apiInfo;
+	
+	@Bean
+	public Docket addUserDocket () {
+		Docket docket = new Docket(DocumentationType.SWAGGER_2);
+		docket.apiInfo(apiInfo);
+		return docket;
+	}
+
+	public void setApiInfo(ApiInfo apiInfo) {
+		this.apiInfo = apiInfo;
+	}
+	
+	
+}

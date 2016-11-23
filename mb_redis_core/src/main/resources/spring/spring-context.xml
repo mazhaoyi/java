@@ -69,8 +69,7 @@
         <property name="logSlowSql" value="true" />
         <property name="mergeSql" value="true" />
     </bean>
-    <bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter">
-    </bean>
+    <bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter"/>
 
 	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
