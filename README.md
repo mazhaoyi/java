@@ -1,19 +1,21 @@
-## mybatis-redis-mysql
+# mybatis-redis-mysql
 This is a java project developed using eclipse
-## description
+# description
 这是一个基础的工程
-## tools
-# spring
+# tools
+## spring
 springmvc-4.3.3
-# mybatis
+## mybatis
 mybatis-3.4.1
-# mysql
+## mysql
 mysql-5.7.16
-# redis
+## redis
 redis-3.2.4
-# logback
+## logback
 logback-1.1.7
-# druid
+## druid
 druid-1.0.9
-# 
+## swagger
+swagger2-2.6.1
+## 
 正在逐渐添加一些功能，不涉及业务逻辑，仅做记录和分享使用.
