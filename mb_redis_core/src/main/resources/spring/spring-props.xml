@@ -6,6 +6,35 @@
 						http://www.springframework.org/schema/context    
                         http://www.springframework.org/schema/context/spring-context.xsd
 						">
-
 	
+	<!-- redis properties -->
+	<!-- spring只允许有一个property-placeholder之类的文件，如果有多个 start  -->
+	<bean id="redisResources" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<value>classpath:properties/redis.properties</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="redisConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="locations" ref="redisResources"/>
+	</bean>
+	<!-- spring只允许有一个property-placeholder之类的文件，如果有多个 end  -->
+	
+	<!-- jdbc properties -->
+	<!-- spring只允许有一个property-placeholder之类的文件，如果有多个 start -->
+	<bean id="jdbcResources" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<value>classpath:properties/jdbc.properties</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="jdbcConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations" ref="jdbcResources" />
+	</bean>
+	<!-- spring只允许有一个property-placeholder之类的文件，如果有多个 end -->
 </beans>
