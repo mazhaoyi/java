@@ -81,10 +81,8 @@
 		<!-- 分页插件 -->
 		<property name="plugins">
 			<list>
-				<bean
-					class="com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor">
-					<property name="dialectClass"
-						value="com.github.miemiedev.mybatis.paginator.dialect.PostgreSQLDialect" />
+				<bean class="com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor">
+					<property name="dialectClass" value="com.github.miemiedev.mybatis.paginator.dialect.MySQLDialect" />
 				</bean>
 			</list>
 		</property>
