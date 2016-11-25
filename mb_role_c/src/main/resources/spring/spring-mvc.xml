@@ -22,7 +22,7 @@
         </property>  
     </bean>
     <!-- 注册JSON转换器 -->
-    <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">  
+    <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4">  
         <property name="supportedMediaTypes">  
             <list>  
                 <value>application/json;charset=UTF-8</value>  
