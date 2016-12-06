@@ -20,6 +20,11 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.2</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.3</version>
+		</dependency>
 		<!-- fastJson -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -49,4 +54,22 @@
 			<version>4.12</version>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase><!-- 要绑定的生命周期阶段 在verify之后，install之前执行下面之指定的goal -->
+						<goals>
+							<goal>jar-no-fork</goal><!-- 执行类似mvn source:jar 把源代码打成jar包 -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
