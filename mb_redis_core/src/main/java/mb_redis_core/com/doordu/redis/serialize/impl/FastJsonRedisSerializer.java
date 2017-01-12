@@ -1,6 +1,6 @@
 package mb_redis_core.com.doordu.redis.serialize.impl;
 
-import org.apache.commons.lang.SerializationException;
+import org.apache.commons.lang3.SerializationException;
 import org.springframework.stereotype.Component;
 
 import mb_redis_core.com.doordu.redis.serialize.RedisSerializer;

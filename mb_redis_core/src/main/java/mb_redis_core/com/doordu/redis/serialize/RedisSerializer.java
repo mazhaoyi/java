@@ -1,6 +1,6 @@
 package mb_redis_core.com.doordu.redis.serialize;
 
-import org.apache.commons.lang.SerializationException;
+import org.apache.commons.lang3.SerializationException;
 
 /**
  * redis对象序列化

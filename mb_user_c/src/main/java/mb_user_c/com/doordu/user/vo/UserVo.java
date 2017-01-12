@@ -2,30 +2,19 @@ package mb_user_c.com.doordu.user.vo;
 
 import java.util.Date;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.alibaba.fastjson.annotation.JSONField;
 
 import mb_redis_user_d.com.doordu.entity.ext.UserProperties;
 
 public class UserVo {
-	private Integer userId;
 	private String name;
 	private Integer age;
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@JSONField(format = "yyyy-MM-dd")
 	private Date birthday;
 	private Boolean isValid;
 	private UserProperties properties;
-	public Integer getUserId() {
-		return userId;
-	}
-	public void setUserId(Integer userId) {
-		this.userId = userId;
-	}
 	public String getName() {
 		return name;
 	}
