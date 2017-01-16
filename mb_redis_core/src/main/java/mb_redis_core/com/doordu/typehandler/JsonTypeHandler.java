@@ -7,14 +7,33 @@ import java.sql.SQLException;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 
 import com.alibaba.fastjson.JSON;
+import com.sun.xml.internal.xsom.impl.scd.Iterators.Map;
+
 /**
- * mybatis 自定义JSON类型，对应数据库的json字段
- * @author admin
- *
+ * mybatis 自定义JSON类型，对应数据库JSON类型
+ * 
+ * JSON类型以{}开头和结尾
+ * 
+ * {
+ *    "name": "zhangsan",
+ *    "images": [
+ *        {
+ *            "imageId": "1",
+ *            "path": "/a/b.png"
+ *        },
+ *        {
+ *            "imageId": "2",
+ *            "path": "/c/d.png"
+ *        }
+ *    ]
+ * }
+ * 
  * @param <T>
  */
+@MappedTypes({Map.class})
 public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
 	private Class<T> clazz;
 	
@@ -24,29 +43,26 @@ public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
 		}
 		this.clazz = clazz;
 	}
-	
+
 	@Override
 	public void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
-		// TODO Auto-generated method stub
 		ps.setString(i, JSON.toJSONString(parameter));
 	}
 
 	@Override
 	public T getNullableResult(ResultSet rs, String columnName) throws SQLException {
-		// TODO Auto-generated method stub
-		return JSON.parseObject(rs.getString(columnName), clazz);
+		String str = rs.getString(columnName);
+		return JSON.parseObject(str, clazz);
 	}
 
 	@Override
 	public T getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
 		return JSON.parseObject(rs.getString(columnIndex), clazz);
 	}
 
 	@Override
 	public T getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
 		return JSON.parseObject(cs.getString(columnIndex), clazz);
 	}
-	
+
 }

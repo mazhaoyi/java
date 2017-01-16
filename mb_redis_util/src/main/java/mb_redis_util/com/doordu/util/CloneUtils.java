@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+
 /**
  * clone工具类
  * deepClone
@@ -13,7 +16,7 @@ import java.io.ObjectOutputStream;
 public class CloneUtils {
 	
 	/**
-	 * fastjson clone
+	 * fastjson clone 有类型限制，只能同类型复制
 	 * @param t
 	 * @return
 	 */
@@ -24,6 +27,38 @@ public class CloneUtils {
 		}
 		byte[] bytes = FastJsonSerializerUtils.serialize(t);
 		result = FastJsonSerializerUtils.deserialize(bytes);
+		return result;
+	}
+	
+	/**
+	 * fastjson clone 没有类型限制
+	 * @param t
+	 * @param type
+	 * @return
+	 */
+	public static <T, E> E jsonClone(T t, TypeReference<E> type) {
+		E result = null;
+		if (t == null) {
+			return result;
+		}
+		String tmp = JSON.toJSONString(t);
+		result = JSON.parseObject(tmp, type);
+		return result;
+	}
+	
+	/**
+	 * fastjson clone 没有类型限制
+	 * @param t
+	 * @param type
+	 * @return
+	 */
+	public static <T, E> E jsonClone(T t, Class<E> type) {
+		E result = null;
+		if (t == null) {
+			return result;
+		}
+		String tmp = JSON.toJSONString(t);
+		result = JSON.parseObject(tmp, type);
 		return result;
 	}
 	
