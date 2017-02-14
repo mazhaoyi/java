@@ -542,13 +542,14 @@ public class HttpUtils {
 	 */
 	private static Header[] defaultHeaders() {
 		Header[] headers = {
-				new BasicHeader("Content-Type", "application/json;charset=utf-8")
+				new BasicHeader("Content-Type", "application/json"),
+				new BasicHeader("Content-Type", "text/html")
 		};
 		return headers;
 	}
 	
 	public static void main(String[] args) {
-		String url = "http://www.baidu.com?id=123";
+		String url = "https://www.baidu.com?id=123";
 		Map<String, Object> params = new HashMap<>();
 		params.put("appid", 1234L);
 		params.put("age", 10);
@@ -563,5 +564,7 @@ public class HttpUtils {
 			url = url + "?" + kvParams;
 		}
 		System.out.println(url);
+		String resp = getSsl(url, params);
+		System.out.println(resp);
 	}
 }
