@@ -10,7 +10,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 
 import com.alibaba.fastjson.JSON;
-import com.sun.xml.internal.xsom.impl.scd.Iterators.Map;
+import java.util.Map;
 
 /**
  * mybatis 自定义JSON类型，对应数据库JSON类型
