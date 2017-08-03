@@ -1,8 +1,7 @@
 package mb_redis_util.com.doordu.util;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONReader;
@@ -17,20 +16,22 @@ public class JsonFileUtils {
 	 * 从json文件读取json字符串
 	 * @param name
 	 * @return
+	 * @throws IOException 
 	 */
-	public static String getJson(String name) {
+	public static String getJson(String name) throws Exception {
 		String json = null;
-		FileReader fr = null;
+		InputStreamReader fr = null;
+//		FileReader fr = null;
 		JSONReader jr = null;
 		try {
-			String path = JsonFileUtils.class.getClassLoader().getResource(name).getPath();
+			// jar包中的文件读取不到，要用流读取
+//			String path = JsonFileUtils.class.getClassLoader().getResource(name).getPath();
 			
-			fr = new FileReader(path);
+			fr = new InputStreamReader(JsonFileUtils.class.getClassLoader().getResourceAsStream(name));
+//			fr = new FileReader(path);
 			jr = new JSONReader(fr);
 			
 			json = jr.readString();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} finally {
 			if (fr != null) {
 				try {
@@ -39,12 +40,8 @@ public class JsonFileUtils {
 					e.printStackTrace();
 				}
 			}
-			if (fr != null) {
-				try {
-					fr.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			if (jr != null) {
+				jr.close();
 			}
 		}
 		return json;
@@ -54,8 +51,9 @@ public class JsonFileUtils {
 	 * @param name
 	 * @param type
 	 * @return
+	 * @throws IOException 
 	 */
-	public static <T> T getObject(String name, TypeReference<T> type) {
+	public static <T> T getObject(String name, TypeReference<T> type) throws Exception {
 		String json = getJson(name);
 		T t = JSON.parseObject(json, type);
 		return t;

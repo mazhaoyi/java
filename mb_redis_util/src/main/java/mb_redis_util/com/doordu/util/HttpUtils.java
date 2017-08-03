@@ -21,6 +21,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -43,15 +44,135 @@ import org.apache.http.util.EntityUtils;
  */
 public class HttpUtils {
 	/**
+	 * http get提交
+	 * @param url
+	 * @param params <k, v>参数
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 */
+	public static String get(String url, Map<String, Object> params) throws IOException, Exception {
+		Header[] headers = defaultHeaders();
+		Charset charset = Charset.forName("utf-8");
+		return get(url, params, charset, headers);
+	}
+	/**
 	 * http post提交
 	 * @param url
 	 * @param params <k, v>参数
 	 * @param jsonBody
 	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static String post(String url, Map<String, Object> params, String jsonBody) {
+	public static String post(String url, Map<String, Object> params, String jsonBody) throws IOException, Exception {
 		Header[] headers = defaultHeaders();
-		return post(url, headers, params, jsonBody);
+		Charset charset = Charset.forName("utf-8");
+		return post(url, params, jsonBody, charset, headers);
+	}
+	/**
+	 * http ssl get提交
+	 * @param url
+	 * @param keystoreFile 证书文件
+	 * @param password 密码
+	 * @param params <k, v>参数
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 */
+	public static String getSsl(String url, String keystoreFile, String password, Map<String, Object> params) throws IOException, Exception {
+		Header[] headers = defaultHeaders();
+		Charset charset = Charset.forName("utf-8");
+		return getSsl(url, keystoreFile, password, params, charset, headers);
+	}
+	/**
+	 * http ssl post提交
+	 * @param url
+	 * @param keystoreFile 证书文件
+	 * @param password 密码
+	 * @param params <k, v>参数
+	 * @param jsonBody
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 */
+	public static String postSsl(String url, String keystoreFile, String password, Map<String, Object> params, String jsonBody) throws IOException, Exception {
+		Header[] headers = defaultHeaders();
+		Charset charset = Charset.forName("utf-8");
+		return postSsl(url, keystoreFile, password, params, jsonBody, charset, headers);
+	}
+	/**
+	 * http get ssl 提交
+	 * 忽略证书
+	 * @param url
+	 * @param params <k, v>参数
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 */
+	public static String getSsl(String url, Map<String, Object> params) throws IOException, Exception {
+		Header[] headers = defaultHeaders();
+		Charset charset = Charset.forName("utf-8");
+		return getSsl(url, params, charset, headers);
+	}
+	/**
+	 * http post ssl 提交
+	 * 忽略证书
+	 * @param url
+	 * @param params <k, v>参数
+	 * @param jsonBody
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 */
+	public static String postSsl(String url, Map<String, Object> params, String jsonBody) throws IOException, Exception {
+		Header[] headers = defaultHeaders();
+		Charset charset = Charset.forName("utf-8");
+		return postSsl(url, params, jsonBody, charset, headers);
+	}
+	/**
+	 * post form 提交
+	 * @param url
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 */
+	public static String postForm(String url, Map<String, Object> params) throws Exception {
+		Charset charset = Charset.forName("utf-8");
+		Header[] headers = {
+				new BasicHeader("Content-Type", "application/x-www-form-urlencoded"),
+		};
+		return postForm(url, params, headers, charset);
+	}
+	/**
+	 * post form ssl 提交
+	 * @param url
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 */
+	public static String postFormSsl(String url, Map<String, Object> params) throws Exception {
+		Charset charset = Charset.forName("utf-8");
+		Header[] headers = {
+				new BasicHeader("Content-Type", "application/x-www-form-urlencoded"),
+		};
+		return postFormSsl(url, params, charset, headers);
+	}
+	/**
+	 * post form ssl 提交
+	 * @param url
+	 * @param keystoreFile
+	 * @param password
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 */
+	public static String postFormSsl(String url, String keystoreFile, String password, Map<String, Object> params) throws Exception {
+		Header[] headers = {
+				new BasicHeader("Content-Type", "application/x-www-form-urlencoded"),
+		};
+		Charset charset = Charset.forName("utf-8");
+		return postFormSsl(url, keystoreFile, password, params, charset, headers);
 	}
 	/**
 	 * http post提交
@@ -61,34 +182,53 @@ public class HttpUtils {
 	 * @param jsonBody
 	 * @return
 	 */
-	public static String post(String url, Header[] headers, Map<String, Object> params, String jsonBody) {
+	public static String post(String url, Map<String, Object> params, String jsonBody, Charset charset, Header[] headers) throws IOException, Exception {
 		CloseableHttpClient httpClient = null;
 		String result = null;
 		try {
 			httpClient = HttpClients.createDefault();
-			result = post(url, headers, params, jsonBody, httpClient);
+			result = post(url, params, jsonBody, charset, headers, httpClient);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 		}
 		return result;
 	}
 	/**
-	 * http get提交
+	 * post提交表单
+	 * 
+	 * Charset utf-8
+	 * Content-Type application/x-www-form-urlencoded
+	 * 
 	 * @param url
-	 * @param params <k, v>参数
+	 * @param params
 	 * @return
+	 * @throws Exception
 	 */
-	public static String get(String url, Map<String, Object> params) {
-		Header[] headers = defaultHeaders();
-		return get(url, headers, params);
+	public static String postForm(String url, Map<String, Object> params, Header[] headers, Charset charset) throws Exception {
+		CloseableHttpClient httpClient = null;
+		String response = null;
+		try {
+			response = postForm(url, params, charset, headers, httpClient);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (httpClient != null) {
+				try {
+					httpClient.close();
+				} catch (IOException e) {
+					throw e;
+				}
+			}
+		}
+		return response;
 	}
 	/**
 	 * http get提交
@@ -97,20 +237,78 @@ public class HttpUtils {
 	 * @param params <k, v>参数
 	 * @return
 	 */
-	public static String get(String url, Header[] headers, Map<String, Object> params) {
+	public static String get(String url, Map<String, Object> params, Charset charset, Header[] headers) throws IOException, Exception {
 		CloseableHttpClient httpClient = null;
 		String result = null;
 		try {
 			httpClient = HttpClients.createDefault();
-			result = get(url, headers, params, httpClient);
+			result = get(url, params, charset, headers, httpClient);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
+				}
+			}
+		}
+		return result;
+	}
+	/**
+	 * post form ssl 提交
+	 * @param url
+	 * @param params
+	 * @param charset
+	 * @param headers
+	 * @return
+	 * @throws Exception
+	 */
+	public static String postFormSsl(String url, Map<String, Object> params, Charset charset, Header[] headers) throws Exception {
+		CloseableHttpClient httpClient = null;
+		String result = null;
+		try {
+			httpClient = createSSLClient();
+			result = postForm(url, params, charset, headers, httpClient);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (httpClient != null) {
+				try {
+					httpClient.close();
+				} catch (IOException e) {
+					throw e;
+				}
+			}
+		}
+		return result;
+	}
+	/**
+	 * post form ssl 提交
+	 * @param url
+	 * @param keystoreFile
+	 * @param password
+	 * @param params
+	 * @param charset
+	 * @param headers
+	 * @return
+	 * @throws Exception
+	 */
+	public static String postFormSsl(String url, String keystoreFile, String password, Map<String, Object> params, Charset charset, Header[] headers) throws Exception {
+		CloseableHttpClient httpClient = null;
+		String result = null;
+		try {
+			httpClient = createSSLClient(keystoreFile, password);
+			result = postForm(url, params, charset, headers, httpClient);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (httpClient != null) {
+				try {
+					httpClient.close();
+				} catch (IOException e) {
+					throw e;
 				}
 			}
 		}
@@ -121,39 +319,26 @@ public class HttpUtils {
 	 * @param url
 	 * @param keystoreFile 证书文件
 	 * @param password 密码
-	 * @param params <k, v>参数
-	 * @param jsonBody
-	 * @return
-	 */
-	public static String postSsl(String url, String keystoreFile, String password, Map<String, Object> params, String jsonBody) {
-		Header[] headers = defaultHeaders();
-		return postSsl(url, keystoreFile, password, headers, params, jsonBody);
-	}
-	/**
-	 * http ssl post提交
-	 * @param url
-	 * @param keystoreFile 证书文件
-	 * @param password 密码
 	 * @param headers
 	 * @param params <k, v>参数
 	 * @param jsonBody
 	 * @return
 	 */
-	public static String postSsl(String url, String keystoreFile, String password, Header[] headers, Map<String, Object> params, String jsonBody) {
+	public static String postSsl(String url, String keystoreFile, String password, Map<String, Object> params, String jsonBody, Charset charset, Header[] headers) throws IOException, Exception {
 		
 		CloseableHttpClient httpClient = null;
 		String result = null;
 		try {
 			httpClient = createSSLClient(keystoreFile, password);
-			result = post(url, headers, params, jsonBody, httpClient);
+			result = post(url, params, jsonBody, charset, headers, httpClient);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 		}
@@ -164,36 +349,24 @@ public class HttpUtils {
 	 * @param url
 	 * @param keystoreFile 证书文件
 	 * @param password 密码
-	 * @param params <k, v>参数
-	 * @return
-	 */
-	public static String getSsl(String url, String keystoreFile, String password, Map<String, Object> params) {
-		Header[] headers = defaultHeaders();
-		return getSsl(url, keystoreFile, password, headers, params);
-	}
-	/**
-	 * http ssl get提交
-	 * @param url
-	 * @param keystoreFile 证书文件
-	 * @param password 密码
 	 * @param headers
 	 * @param params <k, v>参数
 	 * @return
 	 */
-	public static String getSsl(String url, String keystoreFile, String password, Header[] headers, Map<String, Object> params) {
+	public static String getSsl(String url, String keystoreFile, String password, Map<String, Object> params, Charset charset, Header[] headers) throws IOException, Exception {
 		CloseableHttpClient httpClient = null;
 		String result = null;
 		try {
 			httpClient = createSSLClient(keystoreFile, password);
-			result = get(url, headers, params, httpClient);
+			result = get(url, params, charset, headers, httpClient);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 		}
@@ -203,39 +376,26 @@ public class HttpUtils {
 	 * http post ssl 提交
 	 * 忽略证书
 	 * @param url
-	 * @param params <k, v>参数
-	 * @param jsonBody
-	 * @return
-	 */
-	public static String postSsl(String url, Map<String, Object> params, String jsonBody) {
-		Header[] headers = defaultHeaders();
-		return postSsl(url, headers, params, jsonBody);
-	}
-	
-	/**
-	 * http post ssl 提交
-	 * 忽略证书
-	 * @param url
 	 * @param headers
 	 * @param params <k, v>参数
 	 * @param jsonBody
 	 * @return
 	 */
-	public static String postSsl(String url, Header[] headers, Map<String, Object> params, String jsonBody) {
+	public static String postSsl(String url, Map<String, Object> params, String jsonBody, Charset charset, Header[] headers) throws IOException, Exception {
 		
 		CloseableHttpClient httpClient = null;
 		String result = null;
 		try {
 			httpClient = createSSLClient();
-			result = post(url, headers, params, jsonBody, httpClient);
+			result = post(url, params, jsonBody, charset, headers, httpClient);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 		}
@@ -246,37 +406,25 @@ public class HttpUtils {
 	 * http get ssl 提交
 	 * 忽略证书
 	 * @param url
-	 * @param params <k, v>参数
-	 * @return
-	 */
-	public static String getSsl(String url, Map<String, Object> params) {
-		Header[] headers = defaultHeaders();
-		return getSsl(url, headers, params);
-	}
-	
-	/**
-	 * http get ssl 提交
-	 * 忽略证书
-	 * @param url
 	 * @param headers
 	 * @param params <k, v>参数
 	 * @return
 	 */
-	public static String getSsl(String url, Header[] headers, Map<String, Object> params) {
+	public static String getSsl(String url, Map<String, Object> params, Charset charset, Header[] headers) throws IOException, Exception {
 		
 		CloseableHttpClient httpClient = null;
 		String result = null;
 		try {
 			httpClient = createSSLClient();
-			result = get(url, headers, params, httpClient);
+			result = get(url, params, charset, headers, httpClient);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 		}
@@ -288,7 +436,18 @@ public class HttpUtils {
 	 * @param params
 	 * @return a=b&c=d
 	 */
-	public static String createKvParams(Map<String, Object> params) {
+	public static String createKvParams(Map<String, Object> params) throws IOException, Exception {
+		Charset charset = Charset.forName("utf-8");
+		String kvPath = createKvParams(params, charset);
+		return kvPath;
+	}
+	
+	/**
+	 * 创建KV形式的参数
+	 * @param params
+	 * @return a=b&c=d
+	 */
+	public static String createKvParams(Map<String, Object> params, Charset charset) throws IOException, Exception {
 		ByteArrayOutputStream os = null;
 		String kvParams = null;
 		try {
@@ -298,20 +457,20 @@ public class HttpUtils {
 					BasicNameValuePair nvp = new BasicNameValuePair(param.getKey(), String.valueOf(param.getValue()));
 					nvps.add(nvp);
 				}
-				UrlEncodedFormEntity ufe = new UrlEncodedFormEntity(nvps, Charset.forName("utf-8"));
+				UrlEncodedFormEntity ufe = new UrlEncodedFormEntity(nvps, charset);
 				os = new ByteArrayOutputStream();
 
 				ufe.writeTo(os);
 				kvParams = os.toString();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (os != null) {
 				try {
 					os.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 		}
@@ -319,13 +478,29 @@ public class HttpUtils {
 	}
 	
 	/**
+	 * K,V参数拼接到URL上 utf-8
+	 * @param url
+	 * @param params
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 */
+	public static String createPath(String url, Map<String, Object> params) throws IOException, Exception {
+		Charset charset = Charset.forName("utf-8");
+		String path = createPath(url, params, charset);
+		return path;
+	}
+	
+	/**
 	 * K,V参数拼接到URL上
 	 * @param url
 	 * @param params
 	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static String createPath(String url, Map<String, Object> params) {
-		String kvPath = createKvParams(params);
+	public static String createPath(String url, Map<String, Object> params, Charset charset) throws IOException, Exception {
+		String kvPath = createKvParams(params, charset);
 		if (StringUtils.isNotBlank(kvPath)) {
 			if (StringUtils.contains(url, "?")) {
 				url = url + "&" + kvPath;
@@ -343,15 +518,17 @@ public class HttpUtils {
 	 * @param params
 	 * @param httpClient
 	 * @return
+	 * @throws ClientProtocolException 
+	 * @throws Exception 
 	 */
-	private static String get(String url, Header[] headers, Map<String, Object> params, CloseableHttpClient httpClient) {
+	public static String get(String url, Map<String, Object> params, Charset charset, Header[] headers, CloseableHttpClient httpClient) throws ClientProtocolException, IOException, Exception {
 		HttpGet get = null;
 		CloseableHttpResponse response = null;
 		HttpEntity responseEntity = null;
 		
 		String result = null;
 		try {
-			url = createPath(url, params);
+			url = createPath(url, params, charset);
 			get = new HttpGet(url);
 			if (headers != null) {
 				get.setHeaders(headers);
@@ -359,25 +536,25 @@ public class HttpUtils {
 			response = httpClient.execute(get);
 			if (response != null) {
 				responseEntity = response.getEntity();
-				result = EntityUtils.toString(responseEntity);
+				result = EntityUtils.toString(responseEntity, charset);
 			}
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			throw e;
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (responseEntity != null) {
 				try {
 					EntityUtils.consume(responseEntity);
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 			if (response != null) {
 				try {
 					response.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 			if (get != null) {
@@ -387,7 +564,7 @@ public class HttpUtils {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 		}
@@ -402,47 +579,48 @@ public class HttpUtils {
 	 * @param jsonBody
 	 * @param httpClient
 	 * @return
+	 * @throws ClientProtocolException 
 	 */
-	private static String post(String url, Header[] headers, Map<String, Object> params, String jsonBody, CloseableHttpClient httpClient) {
+	private static String post(String url, Map<String, Object> params, String jsonBody, Charset charset, Header[] headers, CloseableHttpClient httpClient) throws ClientProtocolException, IOException, Exception {
 		HttpPost post = null;
 		CloseableHttpResponse response = null;
 		HttpEntity responseEntity = null;
 		
 		String result = null;
 		try {
-			url = createPath(url, params);
+			url = createPath(url, params, charset);
 			post = new HttpPost(url);
 			if (headers != null) {
 				post.setHeaders(headers);
 			}
 			if (StringUtils.isNotBlank(jsonBody)) {
-				StringEntity requestEntity = new StringEntity(jsonBody, Charset.forName("utf-8"));
+				StringEntity requestEntity = new StringEntity(jsonBody, charset);
 				post.setEntity(requestEntity);
 			}
 			response = httpClient.execute(post);
 			if (response != null) {
 				responseEntity = response.getEntity();
-				result = EntityUtils.toString(responseEntity);
+				result = EntityUtils.toString(responseEntity, charset);
 			}
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			throw e;
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (responseEntity != null) {
 				try {
 					EntityUtils.consume(responseEntity);
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 			if (response != null) {
 				try {
 					response.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
 				}
 			}
 			if (post != null) {
@@ -452,7 +630,78 @@ public class HttpUtils {
 				try {
 					httpClient.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw e;
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * post提交表单
+	 * @param url
+	 * @param headers
+	 * @param params
+	 * @param charset
+	 * @return
+	 */
+	public static String postForm(String url, Map<String, Object> params, Charset charset, Header[] headers, CloseableHttpClient httpClient) throws Exception {
+		HttpPost post = null;
+		CloseableHttpResponse response = null;
+		HttpEntity responseEntity = null;
+		StringEntity reqEntity = null;
+		
+		String result = null;
+		try {
+			post = new HttpPost(url);
+			if (headers != null) {
+				post.setHeaders(headers);
+			}
+			if (params != null && !params.isEmpty()) {
+				List<NameValuePair> nvps = new ArrayList<>();
+				for (Map.Entry<String, Object> entry : params.entrySet()) {
+					NameValuePair nvp = new BasicNameValuePair(entry.getKey(), entry.getValue() == null ? "" : entry.getValue().toString());
+					nvps.add(nvp);
+				}
+				reqEntity = new UrlEncodedFormEntity(nvps, charset);
+			}
+			if (reqEntity != null) {
+				post.setEntity(reqEntity);
+			}
+			response = httpClient.execute(post);
+			if (response != null) {
+				responseEntity = response.getEntity();
+				result = EntityUtils.toString(responseEntity, charset);
+			}
+		} catch (ClientProtocolException e) {
+			throw e;
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (responseEntity != null) {
+				try {
+					EntityUtils.consume(responseEntity);
+				} catch (IOException e) {
+					throw e;
+				}
+			}
+			if (response != null) {
+				try {
+					response.close();
+				} catch (IOException e) {
+					throw e;
+				}
+			}
+			if (post != null) {
+				post.releaseConnection();
+			}
+			if (httpClient != null) {
+				try {
+					httpClient.close();
+				} catch (IOException e) {
+					throw e;
 				}
 			}
 		}
@@ -467,8 +716,7 @@ public class HttpUtils {
 	 * @throws NoSuchAlgorithmException
 	 * @throws KeyStoreException
 	 */
-	private static CloseableHttpClient createSSLClient()
-			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+	private static CloseableHttpClient createSSLClient() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 		CloseableHttpClient httpClient = null;
 		try {
 			SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
@@ -502,9 +750,7 @@ public class HttpUtils {
 	 * @throws IOException
 	 * @throws KeyManagementException
 	 */
-	private static CloseableHttpClient createSSLClient(String keystoreFile, String password)
-			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
-			KeyManagementException {
+	private static CloseableHttpClient createSSLClient(String keystoreFile, String password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, KeyManagementException {
 		CloseableHttpClient httpClient = null;
 		FileInputStream fis = null;
 		try {
@@ -543,12 +789,12 @@ public class HttpUtils {
 	private static Header[] defaultHeaders() {
 		Header[] headers = {
 				new BasicHeader("Content-Type", "application/json"),
-				new BasicHeader("Content-Type", "text/html")
+//				new BasicHeader("Content-Type", "text/html")
 		};
 		return headers;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		String url = "https://www.baidu.com?id=123";
 		Map<String, Object> params = new HashMap<>();
 		params.put("appid", 1234L);
